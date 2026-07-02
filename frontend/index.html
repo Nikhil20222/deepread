@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeepRead</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <nav>
+      <h2>DeepRead</h2>
+
+      <span class="version"> v1.0 </span>
+    </nav>
+
+    <main>
+      <section class="hero">
+        <h1>Understand Research Papers Faster</h1>
+
+        <p>
+          Upload a research paper and explore it through summaries, knowledge
+          graphs and evidence-backed answers.
+        </p>
+      </section>
+
+      <section class="upload-section">
+        <label class="upload-box">
+          <input type="file" id="pdfInput" accept=".pdf" hidden />
+
+          <div class="upload-content">
+            <h3>📄 Drop PDF here</h3>
+
+            <p>or click to browse</p>
+          </div>
+        </label>
+
+        <p id="fileName">No file selected</p>
+
+        <button id="analyzeBtn" disabled>Analyze PDF</button>
+      </section>
+
+      <section class="cards">
+        <div class="card">
+          <h3>Recent Documents</h3>
+
+          <p>No documents yet.</p>
+        </div>
+
+        <div class="card">
+          <h3>Knowledge Graph</h3>
+
+          <p>Graph will appear after analysis.</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
