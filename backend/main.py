@@ -3,15 +3,12 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
+import app_state
+
+from routes.summary import router as summary_router
 from services.pdf_reader import extract_text
-from services.ai import generate_summary
 
 app = FastAPI(title="DeepRead API")
-
-UPLOAD_FOLDER = Path("uploads")
-UPLOAD_FOLDER.mkdir(exist_ok=True)
-
-last_uploaded_pdf = None
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,9 +18,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(summary_router)
+
+UPLOAD_FOLDER = Path("uploads")
+UPLOAD_FOLDER.mkdir(exist_ok=True)
+
 
 @app.get("/")
 def home():
+
     return {
         "status": "running",
         "project": "DeepRead"
@@ -33,9 +36,8 @@ def home():
 @app.post("/upload")
 async def upload_pdf(file: UploadFile = File(...)):
 
-    global last_uploaded_pdf
-
     if not file.filename.lower().endswith(".pdf"):
+
         return {
             "success": False,
             "message": "Only PDF files are allowed."
@@ -46,46 +48,21 @@ async def upload_pdf(file: UploadFile = File(...)):
     with open(save_path, "wb") as pdf:
         pdf.write(await file.read())
 
-    last_uploaded_pdf = save_path
+    app_state.last_uploaded_pdf = str(save_path)
 
-    text = extract_text(save_path)
+    result = extract_text(str(save_path))
 
-    if not text.strip():
+    if not result["success"]:
+
         return {
             "success": False,
-            "message": "No readable text found in this PDF."
+            "message": "Unable to read PDF."
         }
 
     return {
         "success": True,
         "filename": file.filename,
-        "characters": len(text),
-        "preview": text[:1000]
-    }
-
-
-@app.post("/summary")
-def summary():
-
-    global last_uploaded_pdf
-
-    if last_uploaded_pdf is None:
-        return {
-            "success": False,
-            "message": "Upload a PDF first."
-        }
-
-    text = extract_text(last_uploaded_pdf)
-
-    if not text.strip():
-        return {
-            "success": False,
-            "message": "Unable to read text from PDF."
-        }
-
-    summary = generate_summary(text)
-
-    return {
-        "success": True,
-        "summary": summary
+        "pages": result["pages"],
+        "characters": len(result["text"]),
+        "preview": result["text"][:1000]
     }

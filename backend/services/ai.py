@@ -20,15 +20,12 @@ def clean_json(text):
 
     return text.strip()
 
-
 def generate_summary(text):
 
     prompt = f"""
 You are an AI study assistant.
 
 Read the following PDF and return ONLY valid JSON.
-
-Format:
 
 {{
     "summary":"...",
@@ -60,9 +57,22 @@ PDF:
             contents=prompt
         )
 
+        print("Gemini Response:")
+        print(response.text)
+
         result = clean_json(response.text)
 
-        return json.loads(result)
+        try:
+            return json.loads(result)
+
+        except json.JSONDecodeError:
+
+            return {
+                "success": True,
+                "summary": result,
+                "key_points": [],
+                "keywords": []
+            }
 
     except Exception as error:
 
