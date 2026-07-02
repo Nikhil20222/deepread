@@ -1,6 +1,8 @@
 const pdfInput = document.getElementById("pdfInput");
 const fileName = document.getElementById("fileName");
 const analyzeBtn = document.getElementById("analyzeBtn");
+const previewSection = document.getElementById("previewSection");
+const previewBox = document.getElementById("previewBox");
 
 let selectedFile = null;
 
@@ -15,8 +17,8 @@ pdfInput.addEventListener("change", () => {
 });
 
 analyzeBtn.addEventListener("click", uploadPDF);
-
 async function uploadPDF() {
+
   const formData = new FormData();
 
   formData.append("file", selectedFile);
@@ -24,29 +26,28 @@ async function uploadPDF() {
   analyzeBtn.textContent = "Uploading...";
 
   try {
+
     const response = await fetch("http://127.0.0.1:8000/upload", {
       method: "POST",
-
       body: formData,
     });
 
     const data = await response.json();
 
-    analyzeBtn.textContent = "Uploaded ✓";
-
     console.log(data);
-    alert(
-      `PDF Uploaded!
 
-Characters: ${data.characters}
+    previewSection.classList.remove("hidden");
 
-Preview:
+    previewBox.textContent = data.preview;
 
-${data.preview.substring(0, 200)}...`,
-    );
+    analyzeBtn.textContent = "Generate Summary";
+
   } catch (error) {
+
     console.error(error);
 
     analyzeBtn.textContent = "Upload Failed";
+
   }
+
 }
