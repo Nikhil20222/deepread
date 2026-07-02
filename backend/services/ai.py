@@ -1,36 +1,46 @@
 import os
 
 from dotenv import load_dotenv
-
 import google.generativeai as genai
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    raise ValueError("GEMINI_API_KEY not found in .env file")
+
+genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 
 def generate_summary(text):
 
+    if not text.strip():
+        return "No readable text found in this PDF."
+
     prompt = f"""
-You are helping a student understand a research paper.
+You are an AI research assistant.
 
-Summarize this paper in this format:
+Read the research paper below and write a clean summary.
 
-Main Idea
+Use exactly this format.
 
-Key Findings
+# Main Idea
 
-Methodology
+# Key Findings
 
-Limitations
+# Methodology
 
-Conclusion
+# Limitations
+
+# Conclusion
+
 
 Paper:
 
-{text[:12000]}
+{text[:15000]}
 """
 
     response = model.generate_content(prompt)

@@ -1,72 +1,585 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DeepRead</title>
 
-    <link rel="stylesheet" href="style.css" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepRead - Read Research Papers Smarter</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
+    <link rel="stylesheet" href="style.css">
 
-  <body>
-    <nav>
-      <h2>DeepRead</h2>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-      <span class="version"> v1.0 </span>
-    </nav>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
 
-    <main>
-      <section class="hero">
-        <h1>Understand Research Papers Faster</h1>
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header>
+
+        <div class="container">
+
+            <div class="logo">
+
+                <h2>DeepRead</h2>
+
+            </div>
+
+            <nav>
+
+                <a href="#upload">Upload</a>
+
+                <a href="#summary">Summary</a>
+
+                <a href="#chat">Chat</a>
+
+                <a href="#quiz">Quiz</a>
+
+                <a href="#compare">Compare</a>
+
+            </nav>
+
+            <button id="themeBtn">
+                Dark Mode
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <div class="container">
+
+            <h1>
+                Read Research Papers Smarter
+            </h1>
+
+            <p>
+
+                Upload any research paper, textbook or notes and let AI
+                summarize, explain, compare and generate quizzes instantly.
+
+            </p>
+
+            <button id="startBtn">
+
+                Get Started
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= UPLOAD ================= -->
+
+    <section id="upload">
+
+        <div class="container">
+
+            <h2>
+
+                Upload PDF
+
+            </h2>
+
+            <div class="upload-box">
+
+                <img src="assets/upload.svg" alt="Upload">
+
+                <p>
+
+                    Drag & Drop your PDF here
+
+                </p>
+
+                <p>or</p>
+
+                <input type="file"
+                    id="pdfInput"
+                    accept=".pdf"
+                    hidden>
+
+                <button id="chooseBtn">
+
+                    Choose PDF
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= PREVIEW ================= -->
+
+    <section id="preview">
+
+        <div class="container">
+
+            <h2>
+
+                PDF Preview
+
+            </h2>
+
+            <div class="preview-card">
+
+                <p>
+
+                    No PDF Selected
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= SUMMARY ================= -->
+
+    <section id="summary">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>
+
+                    AI Summary
+
+                </h2>
+
+            </div>
+
+            <div class="summary-card">
+
+                <p>
+
+                    Upload a PDF to generate summary.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+        <!-- ================= CHAT ================= -->
+
+    <section id="chat">
+
+        <div class="container">
+
+            <h2>Chat with PDF</h2>
+
+            <div class="chat-box">
+
+                <div class="chat-messages" id="chatMessages">
+
+                    <div class="message ai">
+
+                        <p>Hello! Upload a PDF and ask me anything about it.</p>
+
+                    </div>
+
+                </div>
+
+                <div class="chat-input">
+
+                    <input
+                        type="text"
+                        id="questionInput"
+                        placeholder="Ask a question...">
+
+                    <button id="sendBtn">
+
+                        Send
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= SEARCH ================= -->
+
+    <section id="search">
+
+        <div class="container">
+
+            <h2>Semantic Search</h2>
+
+            <p>
+
+                Search important concepts inside your PDF.
+
+            </p>
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search anything...">
+
+                <button id="searchBtn">
+
+                    Search
+
+                </button>
+
+            </div>
+
+            <div id="searchResults">
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= FLASHCARDS ================= -->
+
+    <section id="flashcards">
+
+        <div class="container">
+
+            <h2>
+
+                Flashcards
+
+            </h2>
+
+            <div class="flashcard">
+
+                <h3>
+
+                    Question
+
+                </h3>
+
+                <p id="flashQuestion">
+
+                    Flashcards will appear here.
+
+                </p>
+
+                <hr>
+
+                <h3>
+
+                    Answer
+
+                </h3>
+
+                <p id="flashAnswer">
+
+                    Answer will appear here.
+
+                </p>
+
+            </div>
+
+            <div class="flash-buttons">
+
+                <button id="prevFlash">
+
+                    Previous
+
+                </button>
+
+                <button id="nextFlash">
+
+                    Next
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= QUIZ ================= -->
+
+    <section id="quiz">
+
+        <div class="container">
+
+            <h2>
+
+                Quiz
+
+            </h2>
+
+            <div class="quiz-card">
+
+                <h3 id="quizQuestion">
+
+                    Upload PDF to generate quiz.
+
+                </h3>
+
+                <div class="options">
+
+                    <button class="option">
+
+                        Option A
+
+                    </button>
+
+                    <button class="option">
+
+                        Option B
+
+                    </button>
+
+                    <button class="option">
+
+                        Option C
+
+                    </button>
+
+                    <button class="option">
+
+                        Option D
+
+                    </button>
+
+                </div>
+
+                <button id="nextQuestion">
+
+                    Next Question
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= KNOWLEDGE GRAPH ================= -->
+
+    <section id="graph">
+
+        <div class="container">
+
+            <h2>
+
+                Knowledge Graph
+
+            </h2>
+
+            <div class="graph-box">
+
+                <p>
+
+                    Knowledge graph will appear here.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+        <!-- ================= COMPARE PDFS ================= -->
+
+    <section id="compare">
+
+        <div class="container">
+
+            <h2>Compare PDFs</h2>
+
+            <p>Upload two PDFs and compare their content.</p>
+
+            <div class="compare-box">
+
+                <div class="compare-card">
+
+                    <h3>First PDF</h3>
+
+                    <input
+                        type="file"
+                        id="pdfOne"
+                        accept=".pdf">
+
+                </div>
+
+                <div class="compare-card">
+
+                    <h3>Second PDF</h3>
+
+                    <input
+                        type="file"
+                        id="pdfTwo"
+                        accept=".pdf">
+
+                </div>
+
+            </div>
+
+            <button id="compareBtn">
+
+                Compare PDFs
+
+            </button>
+
+            <div id="compareResult">
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= EXPORT ================= -->
+
+    <section id="export">
+
+        <div class="container">
+
+            <h2>Export</h2>
+
+            <p>Download your generated content.</p>
+
+            <div class="export-buttons">
+
+                <button id="exportPdf">
+
+                    Export PDF
+
+                </button>
+
+                <button id="exportTxt">
+
+                    Export TXT
+
+                </button>
+
+                <button id="exportMd">
+
+                    Export Markdown
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= LOADING ================= -->
+
+    <div id="loading" class="loading">
+
+        <div class="loader"></div>
 
         <p>
-          Upload a research paper and explore it through summaries, knowledge
-          graphs and evidence-backed answers.
+
+            Processing PDF...
+
         </p>
-      </section>
 
-      <section class="upload-section">
-        <label class="upload-box">
-          <input type="file" id="pdfInput" accept=".pdf" hidden />
+    </div>
 
-          <div class="upload-content">
-            <h3>📄 Drop PDF here</h3>
 
-            <p>or click to browse</p>
-          </div>
-        </label>
 
-        <p id="fileName">No file selected</p>
+    <!-- ================= TOAST ================= -->
 
-        <button id="analyzeBtn" disabled>Analyze PDF</button>
-      </section>
+    <div id="toast" class="toast">
 
-      <section class="cards">
-        <div class="card">
-          <h3>Recent Documents</h3>
+        <p id="toastMessage">
 
-          <p>No documents yet.</p>
+            Done!
+
+        </p>
+
+    </div>
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="container">
+
+            <h3>
+
+                DeepRead
+
+            </h3>
+
+            <p>
+
+                Read research papers smarter with AI.
+
+            </p>
+
+            <div class="footer-links">
+
+                <a href="#upload">Upload</a>
+
+                <a href="#summary">Summary</a>
+
+                <a href="#chat">Chat</a>
+
+                <a href="#quiz">Quiz</a>
+
+                <a href="#compare">Compare</a>
+
+            </div>
+
+            <p class="copyright">
+
+                © 2026 DeepRead. Built with HTML, CSS, JavaScript and FastAPI.
+
+            </p>
+
         </div>
 
-        <div class="card">
-          <h3>Knowledge Graph</h3>
+    </footer>
 
-          <p>Graph will appear after analysis.</p>
-        </div>
-      </section>
-      <section id="previewSection" class="hidden">
-        <h2>Document Preview</h2>
 
-        <div id="previewBox">Upload a PDF to see its contents.</div>
-      </section>
-    </main>
 
     <script src="script.js"></script>
-  </body>
+
+</body>
+
 </html>

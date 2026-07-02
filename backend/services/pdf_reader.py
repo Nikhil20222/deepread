@@ -1,14 +1,31 @@
 import fitz
 
+
 def extract_text(pdf_path):
 
-    document = fitz.open(pdf_path)
+    try:
 
-    text = ""
+        document = fitz.open(pdf_path)
 
-    for page in document:
-        text += page.get_text()
+        text = ""
 
-    document.close()
+        total_pages = document.page_count
 
-    return text
+        for page in document:
+
+            text += page.get_text()
+
+        document.close()
+
+        return {
+            "success": True,
+            "text": text,
+            "pages": total_pages
+        }
+
+    except Exception as error:
+
+        return {
+            "success": False,
+            "message": str(error)
+        }
