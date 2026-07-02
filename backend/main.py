@@ -3,6 +3,8 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
+from services.pdf_reader import extract_text
+
 app = FastAPI()
 
 UPLOAD_FOLDER = Path("uploads")
@@ -19,24 +21,34 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return {"message": "DeepRead API is running 🚀"}
+    return {
+        "message": "DeepRead API is running 🚀"
+    }
 
 
 @app.post("/upload")
 async def upload_pdf(file: UploadFile = File(...)):
 
+    # Check PDF
     if not file.filename.endswith(".pdf"):
         return {
             "success": False,
             "message": "Only PDF files are allowed."
         }
 
+    # Save PDF
     save_path = UPLOAD_FOLDER / file.filename
 
     with open(save_path, "wb") as pdf:
         pdf.write(await file.read())
 
+    # Extract text
+    text = extract_text(save_path)
+
+    # Return response
     return {
         "success": True,
-        "filename": file.filename
+        "filename": file.filename,
+        "characters": len(text),
+        "preview": text[:500]
     }
