@@ -1,48 +1,123 @@
 import os
+import json
 
+from google import genai
 from dotenv import load_dotenv
-import google.generativeai as genai
 
 load_dotenv()
 
-api_key = os.getenv("GEMINI_API_KEY")
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
 
-if not api_key:
-    raise ValueError("GEMINI_API_KEY not found in .env file")
 
-genai.configure(api_key=api_key)
+def clean_json(text):
 
-model = genai.GenerativeModel("gemini-2.5-flash")
+    text = text.strip()
+
+    text = text.replace("```json", "")
+    text = text.replace("```", "")
+
+    return text.strip()
 
 
 def generate_summary(text):
 
-    if not text.strip():
-        return "No readable text found in this PDF."
-
     prompt = f"""
-You are an AI research assistant.
+You are an AI study assistant.
 
-Read the research paper below and write a clean summary.
+Read the following PDF and return ONLY valid JSON.
 
-Use exactly this format.
+Format:
 
-# Main Idea
+{{
+    "summary":"...",
+    "key_points":[
+        "...",
+        "...",
+        "...",
+        "...",
+        "..."
+    ],
+    "keywords":[
+        "...",
+        "...",
+        "...",
+        "...",
+        "..."
+    ]
+}}
 
-# Key Findings
+PDF:
 
-# Methodology
-
-# Limitations
-
-# Conclusion
-
-
-Paper:
-
-{text[:15000]}
+{text[:8000]}
 """
 
-    response = model.generate_content(prompt)
+    try:
 
-    return response.text
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        result = clean_json(response.text)
+
+        return json.loads(result)
+
+    except Exception as error:
+
+        return {
+            "success": False,
+            "summary": "",
+            "key_points": [],
+            "keywords": [],
+            "error": str(error)
+        }
+
+
+def generate_flashcards(text):
+
+    prompt = f"""
+Read the following PDF.
+
+Generate exactly 10 flashcards.
+
+Return ONLY valid JSON.
+
+Format:
+
+[
+    {{
+        "question":"...",
+        "answer":"..."
+    }}
+]
+
+PDF:
+
+{text[:8000]}
+"""
+
+    try:
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        result = clean_json(response.text)
+
+        cards = json.loads(result)
+
+        return {
+            "success": True,
+            "flashcards": cards
+        }
+
+    except Exception as error:
+
+        return {
+            "success": False,
+            "flashcards": [],
+            "error": str(error)
+        }
