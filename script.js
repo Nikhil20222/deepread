@@ -2,14 +2,54 @@ const pdfInput = document.getElementById("pdfInput");
 const fileName = document.getElementById("fileName");
 const analyzeBtn = document.getElementById("analyzeBtn");
 
+let selectedFile = null;
+
 pdfInput.addEventListener("change", () => {
 
-const file = pdfInput.files[0];
+    selectedFile = pdfInput.files[0];
 
-if(!file) return;
+    if (!selectedFile) return;
 
-fileName.textContent = file.name;
+    fileName.textContent = selectedFile.name;
 
-analyzeBtn.disabled = false;
+    analyzeBtn.disabled = false;
 
 });
+
+analyzeBtn.addEventListener("click", uploadPDF);
+
+async function uploadPDF() {
+
+    const formData = new FormData();
+
+    formData.append("file", selectedFile);
+
+    analyzeBtn.textContent = "Uploading...";
+
+    try {
+
+        const response = await fetch("http://127.0.0.1:8000/upload", {
+
+            method: "POST",
+
+            body: formData
+
+        });
+
+        const data = await response.json();
+
+        analyzeBtn.textContent = "Uploaded ✓";
+
+        console.log(data);
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        analyzeBtn.textContent = "Upload Failed";
+
+    }
+
+}   
