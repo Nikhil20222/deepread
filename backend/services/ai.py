@@ -1,133 +1,61 @@
-import os
-import json
-
-from google import genai
-from dotenv import load_dotenv
-
-load_dotenv()
-
-client = genai.Client(
-    api_key=os.getenv("GEMINI_API_KEY")
+from services.ai_groq import (
+    generate_summary_groq,
+    generate_flashcards_groq
 )
 
+from services.ai_openrouter import (
+    generate_summary_openrouter,
+    generate_flashcards_openrouter
+)
 
-def clean_json(text):
-
-    text = text.strip()
-
-    text = text.replace("```json", "")
-    text = text.replace("```", "")
-
-    return text.strip()
+from services.ai_gemini import (
+    generate_summary_gemini,
+    generate_flashcards_gemini
+)
 
 def generate_summary(text):
 
-    prompt = f"""
-You are an AI study assistant.
-
-Read the following PDF and return ONLY valid JSON.
-
-{{
-    "summary":"...",
-    "key_points":[
-        "...",
-        "...",
-        "...",
-        "...",
-        "..."
-    ],
-    "keywords":[
-        "...",
-        "...",
-        "...",
-        "...",
-        "..."
-    ]
-}}
-
-PDF:
-
-{text[:8000]}
-"""
-
     try:
+        print("Using Groq")
+        return generate_summary_groq(text)
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
-
-        print("Gemini Response:")
-        print(response.text)
-
-        result = clean_json(response.text)
+    except Exception as e:
+        print("Groq Failed:", e)
 
         try:
-            return json.loads(result)
+            print("Using OpenRouter")
+            return generate_summary_openrouter(text)
 
-        except json.JSONDecodeError:
+        except Exception as e:
+            print("OpenRouter Failed:", e)
 
-            return {
-                "success": True,
-                "summary": result,
-                "key_points": [],
-                "keywords": []
-            }
+            try:
+                print("Using Gemini")
+                return generate_summary_gemini(text)
 
-    except Exception as error:
-
-        return {
-            "success": False,
-            "summary": "",
-            "key_points": [],
-            "keywords": [],
-            "error": str(error)
-        }
-
-
+            except Exception as e:
+                print("Gemini Failed:", e)
+                raise Exception("All AI providers failed.")
 def generate_flashcards(text):
 
-    prompt = f"""
-Read the following PDF.
-
-Generate exactly 10 flashcards.
-
-Return ONLY valid JSON.
-
-Format:
-
-[
-    {{
-        "question":"...",
-        "answer":"..."
-    }}
-]
-
-PDF:
-
-{text[:8000]}
-"""
-
     try:
+        print("Using Groq")
+        return generate_flashcards_groq(text)
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+    except Exception as e:
+        print("Groq Failed:", e)
 
-        result = clean_json(response.text)
+        try:
+            print("Using OpenRouter")
+            return generate_flashcards_openrouter(text)
 
-        cards = json.loads(result)
+        except Exception as e:
+            print("OpenRouter Failed:", e)
 
-        return {
-            "success": True,
-            "flashcards": cards
-        }
+            try:
+                print("Using Gemini")
+                return generate_flashcards_gemini(text)
 
-    except Exception as error:
-
-        return {
-            "success": False,
-            "flashcards": [],
-            "error": str(error)
-        }
+            except Exception as e:
+                print("Gemini Failed:", e)
+                raise Exception("All AI providers failed.")

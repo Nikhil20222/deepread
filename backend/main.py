@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from routes.flashcards import router as flashcards_router
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -19,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(summary_router)
+app.include_router(flashcards_router)
 
 UPLOAD_FOLDER = Path("uploads")
 UPLOAD_FOLDER.mkdir(exist_ok=True)
