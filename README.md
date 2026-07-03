@@ -1,4 +1,4 @@
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/9ed2660a-b8e1-4545-a38e-1f9d22136122" /># DeepRead
+# DeepRead
 
 I made this thing because I was tired of reading 80-page PDFs and still not knowing what the important stuff was. DeepRead takes a PDF, reads it for you, and spits out a summary + flashcards. That's it. That's the whole thing.
 
