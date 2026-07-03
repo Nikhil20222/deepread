@@ -1,4 +1,4 @@
-# DeepRead
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/9ed2660a-b8e1-4545-a38e-1f9d22136122" /># DeepRead
 
 I made this thing because I was tired of reading 80-page PDFs and still not knowing what the important stuff was. DeepRead takes a PDF, reads it for you, and spits out a summary + flashcards. That's it. That's the whole thing.
 
@@ -113,13 +113,15 @@ No promises on when though.
 
 ## screenshots
 
-*(add yours here)*
+<img width="1917" height="922" alt="image" src="https://github.com/user-attachments/assets/28255da4-eb56-4c3c-88c8-63f0d64841d2" />
+<img width="1917" height="822" alt="image" src="https://github.com/user-attachments/assets/f6dfadbb-91a2-4189-90e2-87c468fd7637" />
+<img width="1917" height="877" alt="image" src="https://github.com/user-attachments/assets/b11a3131-2e41-44f7-8769-eae690357460" />
 
----
+
 
 ## demo
 
-*(link your video here)*
+https://github.com/user-attachments/assets/37e01f45-479f-49a5-8671-53b022d75f35
 
 
 
