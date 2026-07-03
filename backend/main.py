@@ -2,6 +2,7 @@ from pathlib import Path
 from routes.flashcards import router as flashcards_router
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 import app_state
 
@@ -25,7 +26,7 @@ UPLOAD_FOLDER = Path("uploads")
 UPLOAD_FOLDER.mkdir(exist_ok=True)
 
 
-@app.get("/")
+@app.get("/api/status")
 def home():
 
     return {
@@ -67,3 +68,10 @@ async def upload_pdf(file: UploadFile = File(...)):
         "characters": len(result["text"]),
         "preview": result["text"][:1000]
     }
+
+
+# Serve the frontend (index.html, style.css, script.js, assets/) from the
+# project root, one level up from this backend/ folder. Mounted last so it
+# doesn't shadow the API routes above. html=True makes "/" return index.html.
+FRONTEND_DIR = Path(__file__).resolve().parent.parent
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

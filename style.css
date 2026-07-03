@@ -116,6 +116,14 @@ button:disabled{
 
 }
 
+#pdfFrame{
+    width:100%;
+    height:520px;
+    border:1px solid #dddddd;
+    border-radius:6px;
+    margin-bottom:15px;
+}
+
 .summary-card h3{
     margin-top:20px;
     margin-bottom:10px;

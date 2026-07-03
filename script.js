@@ -1,8 +1,34 @@
+// Same-origin by default. If you ever host the frontend and backend
+// separately, set this to your backend's full URL, e.g. "https://your-backend.onrender.com"
+const API_BASE = "";
+
 const pdfInput = document.getElementById("pdfInput");
 const uploadBtn = document.getElementById("uploadBtn");
 
+const pdfFrame = document.getElementById("pdfFrame");
 const previewText = document.getElementById("previewText");
 const summaryText = document.getElementById("summaryText");
+
+let lastObjectUrl = null;
+
+function showPdfPreview(file) {
+    if (!file) return;
+
+    if (lastObjectUrl) {
+        URL.revokeObjectURL(lastObjectUrl);
+    }
+
+    lastObjectUrl = URL.createObjectURL(file);
+    pdfFrame.src = lastObjectUrl;
+    pdfFrame.style.display = "block";
+}
+
+// Show the PDF as soon as the user picks a file, no need to wait for upload
+pdfInput.addEventListener("change", () => {
+    if (pdfInput.files.length) {
+        showPdfPreview(pdfInput.files[0]);
+    }
+});
 
 const summaryBtn = document.getElementById("summaryBtn");
 
@@ -35,7 +61,7 @@ async function uploadPDF() {
 
     try {
 
-        const response = await fetch("http://127.0.0.1:8000/upload", {
+        const response = await fetch(`${API_BASE}/upload`, {
             method: "POST",
             body: formData
         });
@@ -50,6 +76,8 @@ async function uploadPDF() {
             uploadBtn.innerText = "Upload PDF";
             return;
         }
+
+        showPdfPreview(pdfInput.files[0]);
 
         previewText.innerHTML = `
             <h3>${data.filename ?? "Untitled"}</h3>
@@ -81,7 +109,7 @@ async function generateSummary() {
 
     try {
 
-        const response = await fetch("http://127.0.0.1:8000/summary", {
+        const response = await fetch(`${API_BASE}/summary`, {
             method: "POST"
         });
 
@@ -136,7 +164,7 @@ async function generateFlashcards() {
 
     try {
 
-        const response = await fetch("http://127.0.0.1:8000/flashcards", {
+        const response = await fetch(`${API_BASE}/flashcards`, {
             method: "POST"
         });
 
