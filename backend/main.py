@@ -69,9 +69,5 @@ async def upload_pdf(file: UploadFile = File(...)):
         "preview": result["text"][:1000]
     }
 
-
-# Serve the frontend (index.html, style.css, script.js, assets/) from the
-# project root, one level up from this backend/ folder. Mounted last so it
-# doesn't shadow the API routes above. html=True makes "/" return index.html.
-FRONTEND_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = Path(__file__).resolve().parent
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
