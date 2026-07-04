@@ -5,10 +5,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = OpenAI(
-    api_key=os.getenv("OPENROUTER_API_KEY"),
-    base_url="https://openrouter.ai/api/v1"
-)
+_client = None
+
+
+def get_client():
+    global _client
+    if _client is None:
+        _client = OpenAI(
+            api_key=os.getenv("OPENROUTER_API_KEY"),
+            base_url="https://openrouter.ai/api/v1"
+        )
+    return _client
 
 
 def clean_json(text):
@@ -33,7 +40,7 @@ PDF:
 {text[:7000]}
 """
 
-    response = client.chat.completions.create(
+    response = get_client().chat.completions.create(
         model="meta-llama/llama-3.3-70b-instruct:free",
         messages=[
             {
@@ -67,7 +74,7 @@ PDF:
 {text[:7000]}
 """
 
-    response = client.chat.completions.create(
+    response = get_client().chat.completions.create(
         model="deepseek/deepseek-chat-v3-0324:free",
         messages=[
             {

@@ -10,6 +10,7 @@ const previewText = document.getElementById("previewText");
 const summaryText = document.getElementById("summaryText");
 
 let lastObjectUrl = null;
+let extractedText = "";
 
 function showPdfPreview(file) {
     if (!file) return;
@@ -79,6 +80,8 @@ async function uploadPDF() {
 
         showPdfPreview(pdfInput.files[0]);
 
+        extractedText = data.text || "";
+
         previewText.innerHTML = `
             <h3>${data.filename ?? "Untitled"}</h3>
 
@@ -104,13 +107,20 @@ async function uploadPDF() {
 }
 async function generateSummary() {
 
+    if (!extractedText) {
+        summaryText.innerHTML = `<p style="color:red">Upload a PDF first.</p>`;
+        return;
+    }
+
     summaryBtn.disabled = true;
     summaryBtn.innerText = "Generating...";
 
     try {
 
         const response = await fetch(`${API_BASE}/summary`, {
-            method: "POST"
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: extractedText })
         });
 
         const data = await response.json();
@@ -159,13 +169,20 @@ async function generateSummary() {
 }
 async function generateFlashcards() {
 
+    if (!extractedText) {
+        alert("Upload a PDF first.");
+        return;
+    }
+
     flashcardBtn.disabled = true;
     flashcardBtn.innerText = "Generating...";
 
     try {
 
         const response = await fetch(`${API_BASE}/flashcards`, {
-            method: "POST"
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: extractedText })
         });
 
         const data = await response.json();
