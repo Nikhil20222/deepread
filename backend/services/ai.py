@@ -37,6 +37,9 @@ def generate_summary(text):
                 print("Gemini Failed:", e)
                 raise Exception(f"All AI providers failed. Last error (Gemini): {e}")
 
+
+def generate_flashcards(text):
+
     try:
         print("Using Groq")
         return generate_flashcards_groq(text)
