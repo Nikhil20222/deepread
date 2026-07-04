@@ -20,7 +20,13 @@ def summary(payload: SummaryRequest):
             "message": "Upload a PDF first."
         }
 
-    result = generate_summary(payload.text)
+    try:
+        result = generate_summary(payload.text)
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"AI generation failed: {str(e)}"
+        }
 
     return {
         "success": True,

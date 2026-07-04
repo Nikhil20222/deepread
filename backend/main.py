@@ -63,5 +63,9 @@ async def upload_pdf(file: UploadFile = File(...)):
     }
 
 
+# Serve the frontend (index.html, style.css, script.js, assets/). These live
+# inside backend/ itself, alongside main.py, so this works whether Vercel's
+# Root Directory is set to "backend" or the repo root. Mounted last so it
+# doesn't shadow the API routes above. html=True makes "/" return index.html.
 FRONTEND_DIR = Path(__file__).resolve().parent
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

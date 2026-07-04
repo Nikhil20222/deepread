@@ -113,15 +113,13 @@ No promises on when though.
 
 ## screenshots
 
-<img width="1917" height="922" alt="image" src="https://github.com/user-attachments/assets/28255da4-eb56-4c3c-88c8-63f0d64841d2" />
-<img width="1917" height="822" alt="image" src="https://github.com/user-attachments/assets/f6dfadbb-91a2-4189-90e2-87c468fd7637" />
-<img width="1917" height="877" alt="image" src="https://github.com/user-attachments/assets/b11a3131-2e41-44f7-8769-eae690357460" />
+*(add yours here)*
 
-
+---
 
 ## demo
 
-https://github.com/user-attachments/assets/37e01f45-479f-49a5-8671-53b022d75f35
+*(link your video here)*
 
 
 

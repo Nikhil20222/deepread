@@ -19,6 +19,12 @@ def flashcards(payload: FlashcardRequest):
             "message": "Upload a PDF first."
         }
 
-    result = generate_flashcards(payload.text)
+    try:
+        result = generate_flashcards(payload.text)
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"AI generation failed: {str(e)}"
+        }
 
     return result
