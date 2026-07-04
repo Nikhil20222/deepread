@@ -1,36 +1,28 @@
 from fastapi import APIRouter
+from pydantic import BaseModel
 
-import app_state
-
-from services.pdf_reader import extract_text
 from services.ai import generate_summary
 
 router = APIRouter()
 
 
-@router.post("/summary")
-def summary():
+class SummaryRequest(BaseModel):
+    text: str
 
-    if app_state.last_uploaded_pdf is None:
+
+@router.post("/summary")
+def summary(payload: SummaryRequest):
+
+    if not payload.text or not payload.text.strip():
 
         return {
             "success": False,
             "message": "Upload a PDF first."
         }
 
-    pdf = extract_text(app_state.last_uploaded_pdf)
-
-    if not pdf["success"]:
-
-        return {
-            "success": False,
-            "message": "Unable to read PDF."
-        }
-
-    result = generate_summary(pdf["text"])
+    result = generate_summary(payload.text)
 
     return {
         "success": True,
-        "pages": pdf["pages"],
         "summary": result
     }

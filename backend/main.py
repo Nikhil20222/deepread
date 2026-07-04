@@ -4,10 +4,8 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-import app_state
-
 from routes.summary import router as summary_router
-from services.pdf_reader import extract_text
+from services.pdf_reader import extract_text_from_bytes
 
 app = FastAPI(title="DeepRead API")
 
@@ -21,9 +19,6 @@ app.add_middleware(
 
 app.include_router(summary_router)
 app.include_router(flashcards_router)
-
-UPLOAD_FOLDER = Path("uploads")
-UPLOAD_FOLDER.mkdir(exist_ok=True)
 
 
 @app.get("/api/status")
@@ -45,14 +40,11 @@ async def upload_pdf(file: UploadFile = File(...)):
             "message": "Only PDF files are allowed."
         }
 
-    save_path = UPLOAD_FOLDER / file.filename
+    pdf_bytes = await file.read()
 
-    with open(save_path, "wb") as pdf:
-        pdf.write(await file.read())
-
-    app_state.last_uploaded_pdf = str(save_path)
-
-    result = extract_text(str(save_path))
+    # Extracted fully in memory, nothing written to disk. This works the
+    # same whether running locally or on a serverless host like Vercel.
+    result = extract_text_from_bytes(pdf_bytes)
 
     if not result["success"]:
 
@@ -66,8 +58,10 @@ async def upload_pdf(file: UploadFile = File(...)):
         "filename": file.filename,
         "pages": result["pages"],
         "characters": len(result["text"]),
-        "preview": result["text"][:1000]
+        "preview": result["text"][:1000],
+        "text": result["text"]
     }
+
 
 FRONTEND_DIR = Path(__file__).resolve().parent
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
