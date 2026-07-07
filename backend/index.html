@@ -18,7 +18,7 @@
 <body>
     <header>
 
-        <div class="container">
+        <div class="container header-inner">
 
             <h2>DeepRead</h2>
 
@@ -27,6 +27,13 @@
                 <a href="#upload">Upload</a>
                 <a href="#summary">Summary</a>
                 <a href="#flashcards">Flashcards</a>
+                <a href="#quiz">Quiz</a>
+                <a href="#mindmap">Mind Map</a>
+                <a href="#chat">Chat</a>
+
+                <button id="themeToggle" class="theme-toggle" type="button" title="Toggle dark mode">
+                    🌙
+                </button>
 
             </nav>
 
@@ -39,8 +46,8 @@
        <h1>Read PDFs Smarter with AI</h1>
 
 <p>
-    Upload your notes, books or research papers and get AI summaries
-    and flashcards in seconds.
+    Upload your notes, books or research papers and get AI summaries,
+    flashcards, quizzes, mind maps and a chat buddy - in seconds.
 </p>
 
 <br>
@@ -113,6 +120,25 @@
 
             <h2>AI Summary</h2>
 
+            <div class="mode-row">
+
+                <label class="mode-label">
+                    <input type="radio" name="summaryMode" value="quick">
+                    Quick
+                </label>
+
+                <label class="mode-label">
+                    <input type="radio" name="summaryMode" value="detailed" checked>
+                    Detailed
+                </label>
+
+                <label class="mode-label">
+                    <input type="radio" name="summaryMode" value="exam">
+                    Exam Notes
+                </label>
+
+            </div>
+
             <button id="summaryBtn">
 
                 Generate Summary
@@ -133,7 +159,29 @@
 
 
 
-    
+    <section id="sectionSummary">
+
+        <div class="container">
+
+            <h2>Section-wise Summary</h2>
+
+            <p class="section-hint">
+                Breaks the document into its natural sections and summarizes each one.
+            </p>
+
+            <button id="sectionSummaryBtn">
+                Generate Section Summaries
+            </button>
+
+            <div class="section-list" id="sectionList">
+                <p class="empty-hint">Upload a PDF first.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
 
     <section id="flashcards">
 
@@ -147,33 +195,131 @@
 
             </button>
 
-            <div class="flashcard">
+            <div class="flashcard-wrap">
 
-    <h3 id="flashQuestion">
-        Question
-    </h3>
+                <div class="flashcard" id="flashcard">
 
-    <hr>
+                    <div class="flashcard-inner" id="flashcardInner">
 
-    <p id="flashAnswer">
-        Answer
-    </p>
+                        <div class="flashcard-face flashcard-front">
+                            <span class="flashcard-label">Question</span>
+                            <p id="flashQuestion">Generate flashcards to get started.</p>
+                        </div>
 
-</div>
+                        <div class="flashcard-face flashcard-back">
+                            <span class="flashcard-label">Answer</span>
+                            <p id="flashAnswer">-</p>
+                        </div>
 
-<div class="flash-buttons">
+                    </div>
 
-    <button id="prevFlash">
-        Previous
-    </button>
+                </div>
 
-    <button id="nextFlash">
-        Next
-    </button>
+            </div>
 
-</div>
+            <div class="flash-buttons">
+
+                <button id="prevFlash">
+                    Previous
+                </button>
+
+                <button id="showAnswerBtn" class="secondary-btn">
+                    Show Answer
+                </button>
+
+                <button id="nextFlash">
+                    Next
+                </button>
+
+            </div>
+
+            <p class="flash-counter" id="flashCounter"></p>
+
+        </div>
+
+    </section>
 
 
+
+    <section id="quiz">
+
+        <div class="container">
+
+            <h2>Quiz Yourself</h2>
+
+            <p class="section-hint">
+                5 multiple-choice questions generated from your document.
+            </p>
+
+            <button id="quizBtn">
+                Generate Quiz
+            </button>
+
+            <div class="quiz-list" id="quizList">
+                <p class="empty-hint">Upload a PDF first.</p>
+            </div>
+
+            <div id="quizScore" class="quiz-score"></div>
+
+        </div>
+
+    </section>
+
+
+
+    <section id="mindmap">
+
+        <div class="container">
+
+            <h2>Mind Map</h2>
+
+            <p class="section-hint">
+                A quick visual breakdown of how the document's ideas connect.
+            </p>
+
+            <button id="mindmapBtn">
+                Generate Mind Map
+            </button>
+
+            <div class="mindmap-card" id="mindmapCard">
+                <p class="empty-hint">Upload a PDF first.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <section id="chat">
+
+        <div class="container">
+
+            <h2>Chat with PDF</h2>
+
+            <p class="section-hint">
+                Ask questions and get answers grounded in your uploaded document.
+            </p>
+
+            <div class="chat-box">
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-msg chat-msg-bot">
+                        Upload a PDF, then ask me anything about it.
+                    </div>
+                </div>
+
+                <div class="chat-input-row">
+
+                    <input type="text" id="chatInput" placeholder="Ask something about your PDF...">
+
+                    <button id="chatSendBtn">Send</button>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </section>
 
@@ -181,11 +327,15 @@
 
     <div id="loading">
 
-        <p>
+        <div class="loading-box">
 
-            Processing...
+            <div class="spinner"></div>
 
-        </p>
+            <p id="loadingText">
+                Processing...
+            </p>
+
+        </div>
 
     </div>
 
