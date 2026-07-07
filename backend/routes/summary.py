@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+from typing import Optional
 
 from services.ai import generate_summary
 
@@ -8,6 +9,7 @@ router = APIRouter()
 
 class SummaryRequest(BaseModel):
     text: str
+    mode: Optional[str] = "detailed"  # "quick" | "detailed" | "exam"
 
 
 @router.post("/summary")
@@ -20,8 +22,10 @@ def summary(payload: SummaryRequest):
             "message": "Upload a PDF first."
         }
 
+    mode = payload.mode if payload.mode in ("quick", "detailed", "exam") else "detailed"
+
     try:
-        result = generate_summary(payload.text)
+        result = generate_summary(payload.text, mode)
     except Exception as e:
         return {
             "success": False,
@@ -30,5 +34,6 @@ def summary(payload: SummaryRequest):
 
     return {
         "success": True,
+        "mode": mode,
         "summary": result
     }
