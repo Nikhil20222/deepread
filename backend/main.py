@@ -5,6 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from routes.summary import router as summary_router
+from routes.quiz import router as quiz_router
+from routes.mindmap import router as mindmap_router
+from routes.section_summary import router as section_summary_router
+from routes.chat import router as chat_router
 from services.pdf_reader import extract_text_from_bytes
 
 app = FastAPI(title="DeepRead API")
@@ -19,6 +23,10 @@ app.add_middleware(
 
 app.include_router(summary_router)
 app.include_router(flashcards_router)
+app.include_router(quiz_router)
+app.include_router(mindmap_router)
+app.include_router(section_summary_router)
+app.include_router(chat_router)
 
 
 @app.get("/api/status")
