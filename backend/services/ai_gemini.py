@@ -22,35 +22,53 @@ def clean_json(text):
     return text.strip()
 
 
-def generate_summary_gemini(text):
+GROUNDING_RULE = """
+Rules you must follow:
+- Base your answer ONLY on the PDF text given below. Do not use outside knowledge.
+- Do NOT invent facts, numbers, names or details that are not in the text.
+- If the text is too short or unclear for a full answer, keep it short instead of making things up.
+"""
 
-    prompt = f"""
-You are an AI study assistant.
 
-Return ONLY valid JSON.
+def _summary_prompt(text, mode):
 
-{{
-    "summary":"...",
-    "key_points":[
-        "...",
-        "...",
-        "...",
-        "...",
-        "..."
-    ],
-    "keywords":[
-        "...",
-        "...",
-        "...",
-        "...",
-        "..."
-    ]
-}}
+    if mode == "quick":
+        shape = """{
+    "summary":"A tight 2-3 sentence summary of the whole document.",
+    "key_points":["...", "...", "..."],
+    "keywords":["...", "...", "..."]
+}"""
+    elif mode == "exam":
+        shape = """{
+    "summary":"A clear summary written for last-minute exam revision.",
+    "key_points":["...", "...", "...", "...", "..."],
+    "keywords":["...", "...", "...", "...", "..."],
+    "exam_notes":["Important point likely to be asked in exams", "...", "...", "...", "..."]
+}"""
+    else:
+        shape = """{
+    "summary":"A well-rounded summary of the document, 4-6 sentences.",
+    "key_points":["...", "...", "...", "...", "..."],
+    "keywords":["...", "...", "...", "...", "..."]
+}"""
+
+    return f"""
+You are an AI study assistant summarizing a document for a student.
+{GROUNDING_RULE}
+
+Return ONLY valid JSON, in this exact shape (no extra keys, no comments):
+
+{shape}
 
 PDF:
 
 {text[:7000]}
 """
+
+
+def generate_summary_gemini(text, mode="detailed"):
+
+    prompt = _summary_prompt(text, mode)
 
     try:
 
@@ -71,9 +89,12 @@ PDF:
 def generate_flashcards_gemini(text):
 
     prompt = f"""
-Generate exactly 10 flashcards.
+You are creating flashcards to help a student revise.
+{GROUNDING_RULE}
+- Each flashcard must test a single fact or idea actually present in the text.
+- Keep answers short and precise (1-2 sentences).
 
-Return ONLY valid JSON.
+Return ONLY valid JSON. Generate exactly 10 flashcards.
 
 [
     {{
@@ -99,6 +120,191 @@ PDF:
         return {
             "success": True,
             "flashcards": json.loads(result)
+        }
+
+    except Exception as e:
+
+        raise Exception(str(e))
+
+
+def generate_quiz_gemini(text):
+
+    prompt = f"""
+You are creating a multiple-choice quiz to test understanding of a document.
+{GROUNDING_RULE}
+- Each question must have exactly 4 options.
+- Only one option is correct, and it must be clearly supported by the text.
+- Keep the wrong options plausible but clearly wrong on a careful re-read of the text.
+
+Return ONLY valid JSON. Generate exactly 5 questions.
+
+[
+    {{
+        "question":"...",
+        "options":["...", "...", "...", "..."],
+        "answer":"the exact text of the correct option",
+        "explanation":"one line on why this is correct, based on the PDF"
+    }}
+]
+
+PDF:
+
+{text[:7000]}
+"""
+
+    try:
+
+        response = get_client().models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        result = clean_json(response.text)
+
+        return {
+            "success": True,
+            "quiz": json.loads(result)
+        }
+
+    except Exception as e:
+
+        raise Exception(str(e))
+
+
+def generate_mindmap_gemini(text):
+
+    prompt = f"""
+You are turning a document into a mind map.
+{GROUNDING_RULE}
+- The root node is the main topic of the document.
+- Each node should be a short phrase (max 6 words), not a full sentence.
+- Go at most 3 levels deep (root -> branches -> sub-branches).
+- Only include branches that are actually discussed in the text.
+
+Return ONLY valid JSON, in this exact shape:
+
+{{
+    "title": "Main topic",
+    "children": [
+        {{
+            "title": "Branch",
+            "children": [
+                {{"title": "Sub-branch", "children": []}}
+            ]
+        }}
+    ]
+}}
+
+PDF:
+
+{text[:7000]}
+"""
+
+    try:
+
+        response = get_client().models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        result = clean_json(response.text)
+
+        return {
+            "success": True,
+            "mindmap": json.loads(result)
+        }
+
+    except Exception as e:
+
+        raise Exception(str(e))
+
+
+def generate_section_summary_gemini(text):
+
+    prompt = f"""
+You are splitting a document into its natural sections and summarizing each one.
+{GROUNDING_RULE}
+- Break the document into 3-6 logical sections based on how it actually flows (topics, headings, or paragraph groups).
+- Give each section a short, descriptive title.
+- Summarize each section in 2-3 sentences using only what that section says.
+
+Return ONLY valid JSON, in this exact shape:
+
+[
+    {{
+        "title": "Section title",
+        "summary": "2-3 sentence summary of just this section"
+    }}
+]
+
+PDF:
+
+{text[:7000]}
+"""
+
+    try:
+
+        response = get_client().models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        result = clean_json(response.text)
+
+        return {
+            "success": True,
+            "sections": json.loads(result)
+        }
+
+    except Exception as e:
+
+        raise Exception(str(e))
+
+
+def generate_chat_answer_gemini(text, question, history=None):
+
+    history = history or []
+
+    history_text = ""
+    for turn in history[-6:]:
+        role = "Student" if turn.get("role") == "user" else "Assistant"
+        history_text += f"{role}: {turn.get('content', '')}\n"
+
+    prompt = f"""
+You are answering a student's question about the PDF document below.
+{GROUNDING_RULE}
+- If the answer is not in the document, say clearly that the document doesn't cover it. Do not guess.
+- Keep the answer focused and to the point.
+
+PDF:
+
+{text[:7000]}
+
+Conversation so far:
+{history_text}
+
+Student's question: {question}
+
+Return ONLY valid JSON, in this exact shape:
+
+{{
+    "answer": "..."
+}}
+"""
+
+    try:
+
+        response = get_client().models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        result = clean_json(response.text)
+        parsed = json.loads(result)
+
+        return {
+            "success": True,
+            "answer": parsed.get("answer", "")
         }
 
     except Exception as e:
